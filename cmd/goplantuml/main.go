@@ -4,6 +4,7 @@ import (
 	"errors"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
@@ -33,6 +34,7 @@ func (as RenderingOptionSlice) Swap(i, j int) {
 
 func main() {
 	recursive := flag.Bool("recursive", true, "walk all directories recursively")
+	outputPath := flag.String("output", "default.puml", "puml file path")
 	ignore := flag.String("ignore", "", "comma separated list of folders to ignore")
 	showAggregations := flag.Bool("show-aggregations", false, "renders public aggregations even when -hide-connections is used (do not render by default)")
 	hideFields := flag.Bool("hide-fields", false, "hides fields")
@@ -101,7 +103,11 @@ func main() {
 		fmt.Println(err.Error())
 		os.Exit(1)
 	}
-	fmt.Print(result.Render())
+
+	if err := ioutil.WriteFile(*outputPath, []byte(result.Render()), 0644); err != nil {
+		fmt.Println(err.Error())
+		os.Exit(1)
+	}
 }
 
 func getDirectories() ([]string, error) {
