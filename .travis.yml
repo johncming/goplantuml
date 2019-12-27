@@ -1,13 +1,16 @@
 language: go
 
 go:
-  - 1.10.x
-  - 1.11.x
+  - 1.13.3
+  - tip
 
 before_install:
-  - go get -t -v ./...
   - go get -u golang.org/x/lint/golint
   - go get github.com/fzipp/gocyclo
+
+install:
+  - go get -t -v ./...
+
 script:
   - go test ./parser -coverprofile=coverage.txt -covermode=atomic
   - golint -set_exit_status ./...
